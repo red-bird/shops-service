@@ -1,0 +1,16 @@
+spring:
+  output.ansi.enabled: ALWAYS
+  application:
+    name: shops-service
+  cloud:
+    config:
+      disovery:
+        enabled: true
+        serviceId: config-server
+    bootstrap:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_ADDR}:${EUREKA_SERVER_PORT}/eureka

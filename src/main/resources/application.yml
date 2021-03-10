@@ -1,0 +1,24 @@
+server:
+  port: 8082
+spring:
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      # create-drop only for tests
+      ddl-auto: create-drop
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/shops
+    username: postgres
+    password: 1945
+#  cloud:
+#    loadbalancer:
+#      cache:
+#        ttl: 1s
+#
+#eureka:
+#  instance:
+#    instanceId: ${spring.application.name}:${random.uuid}
+#    leaseRenewalIntervalInSeconds: 1
+#    leaseExpirationDurationInSeconds: 3
