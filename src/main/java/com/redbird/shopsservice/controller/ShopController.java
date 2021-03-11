@@ -1,10 +1,9 @@
 package com.redbird.shopsservice.controller;
 
+import com.redbird.shopsservice.model.Category;
 import com.redbird.shopsservice.model.Shop;
 import com.redbird.shopsservice.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,21 +26,25 @@ public class ShopController {
         return shopService.findById(id);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public Shop saveGood(@RequestBody Shop shop) {
-        return shopService.saveGood(shop);
+    @PostMapping
+    public Shop saveShop(@RequestParam String name, @RequestParam String address, @RequestParam String number, @RequestParam Category category) {
+        Shop res = shopService.findByName(name);
+        if (res != null) return null;
+        Shop shop = new Shop();
+        shop.setCategory(category);
+        shop.setName(name);
+        shop.setAddress(address);
+        shop.setNumber(number);
+        return shopService.saveShop(shop);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable("id") Long id) {
         shopService.deleteById(id);
     }
 
     @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Shop updateGood(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields) {
+    public Shop updateShop(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields) {
         return shopService.updateById(id, fields);
     }
 }

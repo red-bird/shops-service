@@ -24,7 +24,11 @@ public class ShopService {
         return shopRepository.findById(id).orElse(null);
     }
 
-    public Shop saveGood(Shop shop) {
+    public Shop findByName(String name) {
+        return shopRepository.findByName(name);
+    }
+
+    public Shop saveShop(Shop shop) {
         return shopRepository.save(shop);
     }
 
@@ -50,7 +54,7 @@ public class ShopService {
                     shop.setNumber((String) value);
                 }
                 if (name.equals("category")) {
-                    shop.setCategory(Category.valueOf((String)value));
+                    shop.setCategory(Category.valueOf((String) value));
                 }
             }
             catch (Exception e) {
@@ -58,6 +62,6 @@ public class ShopService {
             }
         });
         shop.setUpdatedTime(ZonedDateTime.now());
-        return saveGood(shop);
+        return shopRepository.save(shop);
     }
 }

@@ -5,11 +5,13 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     hibernate:
+      jdbc:
+        time_zone: Europe/Moscow
       # create-drop only for tests
       ddl-auto: create-drop
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/shops
+    url: jdbc:postgresql://localhost:5432/shops?useLegacyDatetimeCode=false
     username: postgres
     password: 1945
 #  cloud:

@@ -20,6 +20,7 @@ repositories {
 
 ext {
 	set('springCloudVersion', "2020.0.1")
+	set('karateApiVersion', "0.9.6")
 }
 
 dependencies {
@@ -41,6 +42,10 @@ dependencies {
 	//dev
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//test
+	testCompile "com.intuit.karate:karate-junit5:${karateApiVersion}"
+	testCompile "com.intuit.karate:karate-apache:${karateApiVersion}"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 
 @Data
 @Entity
-@Table(name = "shops")
+@Table(name = "goods")
 public class Good {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class Good {
     private String name;
     private String description;
     private Double cost;
-    private Long amount = 0L;
+    private Long amount = 1L;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shop_id")
     private Shop shop;

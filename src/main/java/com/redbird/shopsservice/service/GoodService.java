@@ -29,9 +29,14 @@ public class GoodService {
         return goodRepository.findByName(name);
     }
 
+    public Good findGood(String name, String description, Double cost, String shopName, Category category) {
+        return goodRepository.findByNameAndDescriptionAndCostAndShopNameAndCategory(name, description, cost, shopName, category);
+    }
+
     public Good saveGood(Good good) {
         return goodRepository.save(good);
     }
+
 
     public void deleteById(Long id) {
         goodRepository.deleteById(id);

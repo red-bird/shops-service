@@ -1,8 +1,11 @@
 package com.redbird.shopsservice.controller;
 
+import com.redbird.shopsservice.model.Category;
 import com.redbird.shopsservice.model.Good;
 import com.redbird.shopsservice.model.GoodDTO;
+import com.redbird.shopsservice.model.Shop;
 import com.redbird.shopsservice.service.GoodService;
+import com.redbird.shopsservice.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +20,8 @@ public class GoodController {
 
     @Autowired
     private GoodService goodService;
+    @Autowired
+    private ShopService shopService;
 
     @GetMapping
     public List<Good> findAll() {
@@ -28,20 +33,31 @@ public class GoodController {
         return goodService.findById(id);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public Good saveGood(@RequestBody Good good) {
+    @PostMapping
+    public Good saveGood(@RequestParam String name, @RequestParam String description, @RequestParam Double cost,
+                         @RequestParam String shopName, @RequestParam Category category) {
+        Shop shop = shopService.findByName(shopName);
+        if (shop == null) return null;
+        Good good = goodService.findGood(name, description, cost, shopName, category);
+        if (good != null) {
+            good.setAmount(good.getAmount()+1);
+            return goodService.saveGood(good);
+        }
+        good = new Good();
+        good.setCategory(category);
+        good.setName(name);
+        good.setDescription(description);
+        good.setCost(cost);
+        good.setShop(shop);
         return goodService.saveGood(good);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable("id") Long id) {
         goodService.deleteById(id);
     }
 
     @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public Good updateGood(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields) {
         return goodService.updateById(id, fields);
     }
