@@ -2,6 +2,7 @@ package com.redbird.shopsservice.controller;
 
 import com.redbird.shopsservice.model.Category;
 import com.redbird.shopsservice.model.Shop;
+import com.redbird.shopsservice.model.ShopDTO;
 import com.redbird.shopsservice.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/shops")
+    @RequestMapping("/api/v1/shops")
 public class ShopController {
 
     @Autowired
@@ -27,14 +28,14 @@ public class ShopController {
     }
 
     @PostMapping
-    public Shop saveShop(@RequestParam String name, @RequestParam String address, @RequestParam String number, @RequestParam Category category) {
-        Shop res = shopService.findByName(name);
+    public Shop saveShop(@RequestBody ShopDTO shopDTO) {
+        Shop res = shopService.findByName(shopDTO.getName());
         if (res != null) return null;
         Shop shop = new Shop();
-        shop.setCategory(category);
-        shop.setName(name);
-        shop.setAddress(address);
-        shop.setNumber(number);
+        shop.setCategory(shopDTO.getCategory());
+        shop.setName(shopDTO.getName());
+        shop.setAddress(shopDTO.getAddress());
+        shop.setNumber(shopDTO.getNumber());
         return shopService.saveShop(shop);
     }
 

@@ -44,8 +44,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	//test
-	testCompile "com.intuit.karate:karate-junit5:${karateApiVersion}"
-	testCompile "com.intuit.karate:karate-apache:${karateApiVersion}"
+//	testCompile "com.intuit.karate:karate-apache:${karateApiVersion}"
+//	testCompile "com.intuit.karate:karate-junit5:${karateApiVersion}"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -59,6 +59,24 @@ springBoot{
 	buildInfo()
 }
 
+//sourceSets {
+//	test {
+//		resources {
+//			srcDir file('src/test/java')
+//			exclude '**/*.java'
+//		}
+//	}
+//}
+
 test {
 	useJUnitPlatform()
+//	systemProperty "karate.options", System.properties.getProperty("karate.options")
+//	systemProperty "karate.env", System.properties.getProperty("karate.env")
+//	outputs.upToDateWhen { false }
+//	testLogging.showStandardStreams = true
 }
+
+//task karateDebug(type: JavaExec) {
+//	classpath = sourceSets.test.runtimeClasspath
+//	main = 'com.intuit.karate.cli.Main'
+//}
