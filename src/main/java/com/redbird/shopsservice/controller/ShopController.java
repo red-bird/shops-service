@@ -27,6 +27,16 @@ public class ShopController {
         return shopService.findById(id);
     }
 
+    @GetMapping("/name/{name}")
+    public Shop findByName(@PathVariable("name") String name) {
+        return shopService.findByName(name);
+    }
+
+    @GetMapping("/category/{category}")
+    public List<Shop> findByCategory(@PathVariable("category") Category category) {
+        return shopService.findByCategory(category);
+    }
+
     @PostMapping
     public Shop saveShop(@RequestBody ShopDTO shopDTO) {
         Shop res = shopService.findByName(shopDTO.getName());

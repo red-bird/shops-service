@@ -28,6 +28,10 @@ public class ShopService {
         return shopRepository.findByName(name);
     }
 
+    public List<Shop> findByCategory(Category category) {
+        return shopRepository.findByCategory(category);
+    }
+
     public Shop saveShop(Shop shop) {
         return shopRepository.save(shop);
     }
