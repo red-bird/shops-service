@@ -5,14 +5,22 @@ import com.redbird.shopsservice.model.Shop;
 import com.redbird.shopsservice.model.ShopDTO;
 import com.redbird.shopsservice.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-    @RequestMapping("/api/v1/shops")
+@RequestMapping("/api/v1/shops")
 public class ShopController {
+
+    public <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
+        for (E e : enumClass.getEnumConstants()) {
+            if(e.name().equals(value)) { return true; }
+        }
+        return false;
+    }
 
     @Autowired
     private ShopService shopService;
@@ -33,8 +41,8 @@ public class ShopController {
     }
 
     @GetMapping("/category/{category}")
-    public List<Shop> findByCategory(@PathVariable("category") Category category) {
-        return shopService.findByCategory(category);
+    public List<Shop> findByCategory(@PathVariable("category") String category) {
+        return isInEnum(category, Category.class) ?  shopService.findByCategory(Category.valueOf(category)) : null;
     }
 
     @PostMapping

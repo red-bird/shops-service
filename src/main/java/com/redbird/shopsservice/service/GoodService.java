@@ -33,10 +33,13 @@ public class GoodService {
         return goodRepository.findByNameAndDescriptionAndCostAndShopNameAndCategory(name, description, cost, shopName, category);
     }
 
+    public List<Good> findByCategory(Category category) {
+        return goodRepository.findByCategory(category);
+    }
+
     public Good saveGood(Good good) {
         return goodRepository.save(good);
     }
-
 
     public void deleteById(Long id) {
         goodRepository.deleteById(id);

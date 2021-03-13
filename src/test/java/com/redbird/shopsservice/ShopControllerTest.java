@@ -1,7 +1,6 @@
 package com.redbird.shopsservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.redbird.shopsservice.controller.ShopController;
 import com.redbird.shopsservice.model.Category;
 import com.redbird.shopsservice.model.ShopDTO;
 import org.hamcrest.Matchers;
@@ -21,14 +20,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ShopTest {
+public class ShopControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     ObjectMapper om = new ObjectMapper();
-
-    @Autowired
-    private ShopController controller;
 
     @Test
     @Order(1)
@@ -53,7 +49,7 @@ public class ShopTest {
 
     @Test
     @Order(2)
-    public void postShop2() throws Exception {
+    public void postShopFail() throws Exception {
 
         ShopDTO s = new ShopDTO();
         s.setName("Hoff");
@@ -106,6 +102,15 @@ public class ShopTest {
     }
 
     @Test
+    @Order(2)
+    public void getShopsByCategoryFail() throws Exception {
+        this.mockMvc.perform(get("/api/v1/shops/category/error")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+    }
+
+    @Test
     @Order(3)
     public void patchShop() throws Exception {
         String json = "{\n" +
@@ -122,7 +127,36 @@ public class ShopTest {
     }
 
     @Test
+    @Order(3)
+    public void postSecondShop() throws Exception {
+
+        ShopDTO s = new ShopDTO();
+        s.setName("Mebel Rossii");
+        s.setAddress("Russia");
+        s.setNumber("+7 111 111 11 11");
+        s.setCategory(Category.furniture);
+        String json = om.writeValueAsString(s);
+
+        this.mockMvc.perform(post("/api/v1/shops")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", Matchers.is("Mebel Rossii")))
+                .andExpect(jsonPath("$.address", Matchers.is("Russia")))
+                .andExpect(jsonPath("$.number", Matchers.is("+7 111 111 11 11")))
+                .andExpect(jsonPath("$.category", Matchers.is("furniture")));
+    }
+
+    @Test
     @Order(4)
+    public void getShops() throws Exception {
+        this.mockMvc.perform(get("/api/v1/shops")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(5)
     public void deleteShop() throws Exception {
         this.mockMvc.perform(delete("/api/v1/shops/1"))
                 .andExpect(status().isOk());

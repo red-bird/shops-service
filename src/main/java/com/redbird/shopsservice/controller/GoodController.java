@@ -7,8 +7,6 @@ import com.redbird.shopsservice.model.Shop;
 import com.redbird.shopsservice.service.GoodService;
 import com.redbird.shopsservice.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +15,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/goods")
 public class GoodController {
+
+    public <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
+        for (E e : enumClass.getEnumConstants()) {
+            if(e.name().equals(value)) { return true; }
+        }
+        return false;
+    }
 
     @Autowired
     private GoodService goodService;
@@ -33,21 +38,33 @@ public class GoodController {
         return goodService.findById(id);
     }
 
+    @GetMapping("/category/{category}")
+    public List<Good> findByCategory(@PathVariable("category") String category) {
+        return isInEnum(category, Category.class) ?  goodService.findByCategory(Category.valueOf(category)) : null;
+    }
+
     @PostMapping
-    public Good saveGood(@RequestParam String name, @RequestParam String description, @RequestParam Double cost,
-                         @RequestParam String shopName, @RequestParam Category category) {
-        Shop shop = shopService.findByName(shopName);
+    public Good saveGood(@RequestBody GoodDTO goodDTO) {
+        // check if category doesn't exists
+        if (!isInEnum(goodDTO.getCategory(), Category.class)) {
+            return null;
+        }
+        // check if shop exists
+        Shop shop = shopService.findByName(goodDTO.getShopName());
         if (shop == null) return null;
-        Good good = goodService.findGood(name, description, cost, shopName, category);
+        // check if good already exists
+        Good good = goodService.findGood(goodDTO.getName(), goodDTO.getDescription(), goodDTO.getCost(),
+                goodDTO.getShopName(), Category.valueOf(goodDTO.getCategory()));
         if (good != null) {
             good.setAmount(good.getAmount()+1);
             return goodService.saveGood(good);
         }
+        // create new good
         good = new Good();
-        good.setCategory(category);
-        good.setName(name);
-        good.setDescription(description);
-        good.setCost(cost);
+        good.setCategory(Category.valueOf(goodDTO.getCategory()));
+        good.setName(goodDTO.getName());
+        good.setDescription(goodDTO.getDescription());
+        good.setCost(goodDTO.getCost());
         good.setShop(shop);
         return goodService.saveGood(good);
     }
