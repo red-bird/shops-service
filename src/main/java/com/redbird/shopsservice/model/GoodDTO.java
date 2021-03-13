@@ -11,6 +11,7 @@ public class GoodDTO {
     private String name;
     private String description;
     private Double cost;
+    private Long amount;
     private String shopName;
     @Enumerated(EnumType.STRING)
     @Column(name = "category")

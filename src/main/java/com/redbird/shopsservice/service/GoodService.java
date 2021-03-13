@@ -3,6 +3,7 @@ package com.redbird.shopsservice.service;
 import com.redbird.shopsservice.model.Category;
 import com.redbird.shopsservice.model.Good;
 import com.redbird.shopsservice.model.GoodDTO;
+import com.redbird.shopsservice.model.Shop;
 import com.redbird.shopsservice.repository.GoodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,10 @@ public class GoodService {
 
     public List<Good> findByCategory(Category category) {
         return goodRepository.findByCategory(category);
+    }
+
+    public List<Good> findByShop(Shop shop) {
+        return goodRepository.findByShop(shop);
     }
 
     public Good saveGood(Good good) {

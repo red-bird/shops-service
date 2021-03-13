@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 
 @Data
 @Entity
-@Table(name = "bought_good")
+@Table(name = "bought_goods")
 public class BoughtGood {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class BoughtGood {
     @Column(name = "category")
     private Category category;
 
-    private Long customer_id;
+    private Long customerId;
     private Long amount;
-    private ZonedDateTime boughtTime = ZonedDateTime.now();
+    private ZonedDateTime boughtTime;
 }

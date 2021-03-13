@@ -1,9 +1,6 @@
 package com.redbird.shopsservice.controller;
 
-import com.redbird.shopsservice.model.Category;
-import com.redbird.shopsservice.model.Good;
-import com.redbird.shopsservice.model.GoodDTO;
-import com.redbird.shopsservice.model.Shop;
+import com.redbird.shopsservice.model.*;
 import com.redbird.shopsservice.service.GoodService;
 import com.redbird.shopsservice.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +40,18 @@ public class GoodController {
         return isInEnum(category, Category.class) ?  goodService.findByCategory(Category.valueOf(category)) : null;
     }
 
+    @GetMapping("/name/{name}")
+    public List<Good> findByName(@PathVariable("name") String name) {
+        return goodService.findByName(name);
+    }
+
+    @GetMapping("/shop/{shop}")
+    public List<Good> findByShop(@PathVariable("shop") String shopName) {
+        Shop shop = shopService.findByName(shopName);
+        if (shop == null) return null;
+        return goodService.findByShop(shop);
+    }
+
     @PostMapping
     public Good saveGood(@RequestBody GoodDTO goodDTO) {
         // check if category doesn't exists
@@ -56,7 +65,7 @@ public class GoodController {
         Good good = goodService.findGood(goodDTO.getName(), goodDTO.getDescription(), goodDTO.getCost(),
                 goodDTO.getShopName(), Category.valueOf(goodDTO.getCategory()));
         if (good != null) {
-            good.setAmount(good.getAmount()+1);
+            good.setAmount(good.getAmount()+goodDTO.getAmount());
             return goodService.saveGood(good);
         }
         // create new good
@@ -66,6 +75,7 @@ public class GoodController {
         good.setDescription(goodDTO.getDescription());
         good.setCost(goodDTO.getCost());
         good.setShop(shop);
+        good.setAmount(goodDTO.getAmount());
         return goodService.saveGood(good);
     }
 

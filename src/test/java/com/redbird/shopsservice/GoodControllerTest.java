@@ -82,7 +82,7 @@ public class GoodControllerTest {
 
     @Test
     @Order(3)
-    public void getShopById() throws Exception {
+    public void getGoodById() throws Exception {
         this.mockMvc.perform(get("/api/v1/goods")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -92,6 +92,34 @@ public class GoodControllerTest {
                 .andExpect(jsonPath("$.amount", Matchers.is(1)))
                 .andExpect(jsonPath("$.shop.name", Matchers.is("Hoff")))
                 .andExpect(jsonPath("$.category", Matchers.is("furniture")));
+    }
+
+    @Test
+    @Order(2)
+    public void getGoodByName() throws Exception {
+        this.mockMvc.perform(get("/api/v1/goods/name/Chair")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].name", Matchers.is("Chair")))
+                .andExpect(jsonPath("$.[0].description", Matchers.is("So comfortable to sit")))
+                .andExpect(jsonPath("$.[0].cost", Matchers.is(4999.99)))
+                .andExpect(jsonPath("$.[0].amount", Matchers.is(1)))
+                .andExpect(jsonPath("$.[0].shop.name", Matchers.is("Hoff")))
+                .andExpect(jsonPath("$.[0].category", Matchers.is("furniture")));
+    }
+
+    @Test
+    @Order(2)
+    public void getGoodByShopName() throws Exception {
+        this.mockMvc.perform(get("/api/v1/goods/shop/Hoff")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].name", Matchers.is("Chair")))
+                .andExpect(jsonPath("$.[0].description", Matchers.is("So comfortable to sit")))
+                .andExpect(jsonPath("$.[0].cost", Matchers.is(4999.99)))
+                .andExpect(jsonPath("$.[0].amount", Matchers.is(1)))
+                .andExpect(jsonPath("$.[0].shop.name", Matchers.is("Hoff")))
+                .andExpect(jsonPath("$.[0].category", Matchers.is("furniture")));
     }
 
     @Test
@@ -161,7 +189,7 @@ public class GoodControllerTest {
 
     @Test
     @Order(5)
-    public void deleteShop() throws Exception {
+    public void deleteGood() throws Exception {
         this.mockMvc.perform(delete("/api/v1/goods/1"))
                 .andExpect(status().isOk());
     }

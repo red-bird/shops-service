@@ -16,7 +16,7 @@ public class Good {
     private String name;
     private String description;
     private Double cost;
-    private Long amount = 1L;
+    private Long amount;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shop_id")
     private Shop shop;
