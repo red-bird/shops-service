@@ -32,6 +32,10 @@ public class BuyService {
         return boughtGoodRepository.findAll();
     }
 
+    public BoughtGood findById(Long id) {
+        return boughtGoodRepository.findById(id).orElse(null);
+    }
+
     public List<BoughtGood> findByCustomerId(Long id) {
         return boughtGoodRepository.findByCustomerId(id);
     }
@@ -45,7 +49,8 @@ public class BuyService {
     public List<BoughtGood> findByGoodName(String name) {
         return boughtGoodRepository.findByName(name);
     }
-    public List<BoughtGood> buyGoods(List<BuyGoodDTO> goodDTOList) {
+
+    public synchronized List<BoughtGood> buyGoods(List<BuyGoodDTO> goodDTOList) {
         if (goodDTOList.size() == 0) {
             return null;
         }

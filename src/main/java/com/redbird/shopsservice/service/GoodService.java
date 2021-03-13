@@ -42,7 +42,7 @@ public class GoodService {
         return goodRepository.findByShop(shop);
     }
 
-    public Good saveGood(Good good) {
+    public synchronized Good saveGood(Good good) {
         return goodRepository.save(good);
     }
 
@@ -50,7 +50,7 @@ public class GoodService {
         goodRepository.deleteById(id);
     }
 
-    public Good updateById(Long id, Map<String, Object> fields) {
+    public synchronized Good updateById(Long id, Map<String, Object> fields) {
         Good good = findById(id);
         if (good == null) {
             return null;

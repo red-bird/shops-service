@@ -1,4 +1,4 @@
-package com.redbird.shopsservice;
+package com.redbird.shopsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redbird.shopsservice.model.Category;

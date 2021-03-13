@@ -14,29 +14,34 @@ import java.util.List;
 public class BuyController {
 
     @Autowired
-    BuyService buyService;
+    private BuyService buyService;
 
     @GetMapping
     public List<BoughtGood> findAll() {
         return buyService.findAll();
     }
 
-    @GetMapping("/name/{goodName}")
-    public List<BoughtGood> findByGoodName(@RequestParam("goodName") String goodName) {
+    @GetMapping("/{id}")
+    public BoughtGood findById(@PathVariable("id") Long id) {
+        return buyService.findById(id);
+    }
+
+    @GetMapping("/name/{name}")
+    public List<BoughtGood> findByGoodName(@PathVariable("name") String goodName) {
         return buyService.findByGoodName(goodName);
     }
 
-    @GetMapping("/shop/{shopName}")
-    public List<BoughtGood> findByShopName(@RequestParam("shopName") String shopName) {
+    @GetMapping("/shop/{shop}")
+    public List<BoughtGood> findByShopName(@PathVariable("shop") String shopName) {
         return buyService.findByShopName(shopName);
     }
 
     @GetMapping("/customer/{customerId}")
-    public List<BoughtGood> findByCustomerId(@RequestParam("customerId") Long customerId) {
+    public List<BoughtGood> findByCustomerId(@PathVariable("customerId") Long customerId) {
         return buyService.findByCustomerId(customerId);
     }
 
-    @PostMapping("/buyGood")
+    @PostMapping
     public List<BoughtGood> buyGoods(@RequestBody List<BuyGoodDTO> goodDTOList) {
         return buyService.buyGoods(goodDTOList);
     }

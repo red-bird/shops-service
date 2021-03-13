@@ -1,4 +1,4 @@
-package com.redbird.shopsservice;
+package com.redbird.shopsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redbird.shopsservice.controller.GoodController;
@@ -64,6 +64,7 @@ public class GoodControllerTest {
         good.setName("Chair");
         good.setDescription("So comfortable to sit");
         good.setCost(4999.99);
+        good.setAmount(3L);
         good.setShopName("Hoff");
         good.setCategory("furniture");
         String json = om.writeValueAsString(good);
@@ -75,21 +76,7 @@ public class GoodControllerTest {
                 .andExpect(jsonPath("$.name", Matchers.is("Chair")))
                 .andExpect(jsonPath("$.description", Matchers.is("So comfortable to sit")))
                 .andExpect(jsonPath("$.cost", Matchers.is(4999.99)))
-                .andExpect(jsonPath("$.amount", Matchers.is(1)))
-                .andExpect(jsonPath("$.shop.name", Matchers.is("Hoff")))
-                .andExpect(jsonPath("$.category", Matchers.is("furniture")));
-    }
-
-    @Test
-    @Order(3)
-    public void getGoodById() throws Exception {
-        this.mockMvc.perform(get("/api/v1/goods")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", Matchers.is("Chair")))
-                .andExpect(jsonPath("$.description", Matchers.is("So comfortable to sit")))
-                .andExpect(jsonPath("$.cost", Matchers.is(4999.99)))
-                .andExpect(jsonPath("$.amount", Matchers.is(1)))
+                .andExpect(jsonPath("$.amount", Matchers.is(3)))
                 .andExpect(jsonPath("$.shop.name", Matchers.is("Hoff")))
                 .andExpect(jsonPath("$.category", Matchers.is("furniture")));
     }
@@ -103,7 +90,7 @@ public class GoodControllerTest {
                 .andExpect(jsonPath("$.[0].name", Matchers.is("Chair")))
                 .andExpect(jsonPath("$.[0].description", Matchers.is("So comfortable to sit")))
                 .andExpect(jsonPath("$.[0].cost", Matchers.is(4999.99)))
-                .andExpect(jsonPath("$.[0].amount", Matchers.is(1)))
+                .andExpect(jsonPath("$.[0].amount", Matchers.is(3)))
                 .andExpect(jsonPath("$.[0].shop.name", Matchers.is("Hoff")))
                 .andExpect(jsonPath("$.[0].category", Matchers.is("furniture")));
     }
@@ -117,7 +104,7 @@ public class GoodControllerTest {
                 .andExpect(jsonPath("$.[0].name", Matchers.is("Chair")))
                 .andExpect(jsonPath("$.[0].description", Matchers.is("So comfortable to sit")))
                 .andExpect(jsonPath("$.[0].cost", Matchers.is(4999.99)))
-                .andExpect(jsonPath("$.[0].amount", Matchers.is(1)))
+                .andExpect(jsonPath("$.[0].amount", Matchers.is(3)))
                 .andExpect(jsonPath("$.[0].shop.name", Matchers.is("Hoff")))
                 .andExpect(jsonPath("$.[0].category", Matchers.is("furniture")));
     }
@@ -129,6 +116,7 @@ public class GoodControllerTest {
         good.setName("Table");
         good.setDescription("So comfortable to flip");
         good.setCost(11999.99);
+        good.setAmount(1L);
         good.setShopName("Hoff");
         good.setCategory("furniture");
         String json = om.writeValueAsString(good);
@@ -147,11 +135,26 @@ public class GoodControllerTest {
 
     @Test
     @Order(3)
+    public void getGoodById() throws Exception {
+        this.mockMvc.perform(get("/api/v1/goods")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", Matchers.is("Chair")))
+                .andExpect(jsonPath("$.description", Matchers.is("So comfortable to sit")))
+                .andExpect(jsonPath("$.cost", Matchers.is(4999.99)))
+                .andExpect(jsonPath("$.amount", Matchers.is(3L)))
+                .andExpect(jsonPath("$.shop.name", Matchers.is("Hoff")))
+                .andExpect(jsonPath("$.category", Matchers.is("furniture")));
+    }
+
+    @Test
+    @Order(3)
     public void postFirstGoodIdentical() throws Exception {
         GoodDTO good = new GoodDTO();
         good.setName("Chair");
         good.setDescription("So comfortable to sit");
         good.setCost(4999.99);
+        good.setAmount(2L);
         good.setShopName("Hoff");
         good.setCategory("furniture");
         String json = om.writeValueAsString(good);
@@ -163,7 +166,7 @@ public class GoodControllerTest {
                 .andExpect(jsonPath("$.name", Matchers.is("Chair")))
                 .andExpect(jsonPath("$.description", Matchers.is("So comfortable to sit")))
                 .andExpect(jsonPath("$.cost", Matchers.is(4999.99)))
-                .andExpect(jsonPath("$.amount", Matchers.is(2)))
+                .andExpect(jsonPath("$.amount", Matchers.is(5)))
                 .andExpect(jsonPath("$.shop.name", Matchers.is("Hoff")))
                 .andExpect(jsonPath("$.category", Matchers.is("furniture")));
     }
@@ -182,7 +185,7 @@ public class GoodControllerTest {
                 .andExpect(jsonPath("$.name", Matchers.is("Chair")))
                 .andExpect(jsonPath("$.description", Matchers.is("lgbtq backlight")))
                 .andExpect(jsonPath("$.cost", Matchers.is(4999.99)))
-                .andExpect(jsonPath("$.amount", Matchers.is(2)))
+                .andExpect(jsonPath("$.amount", Matchers.is(5)))
                 .andExpect(jsonPath("$.shop.name", Matchers.is("Hoff")))
                 .andExpect(jsonPath("$.category", Matchers.is("furniture")));
     }
