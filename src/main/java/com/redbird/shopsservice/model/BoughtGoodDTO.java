@@ -2,16 +2,17 @@ package com.redbird.shopsservice.model;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import java.time.ZonedDateTime;
 
 @Data
-public class GoodDTO {
+public class BoughtGoodDTO {
+
     private String name;
     private String description;
     private Double cost;
-    private Long amount;
     private String shopName;
     private String category;
+    private Long customerId;
+    private Long amount;
+    private ZonedDateTime boughtTime;
 }

@@ -34,6 +34,10 @@ public class GoodService {
         return goodRepository.findByNameAndDescriptionAndCostAndShopNameAndCategory(name, description, cost, shopName, category);
     }
 
+    public Good findGoodWithoutCategory(String name, String description, Double cost, String shopName){
+        return goodRepository.findByNameAndDescriptionAndCostAndShopName(name, description, cost, shopName);
+    }
+
     public List<Good> findByCategory(Category category) {
         return goodRepository.findByCategory(category);
     }

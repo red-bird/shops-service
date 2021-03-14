@@ -15,5 +15,6 @@ public interface GoodRepository extends JpaRepository<Good, Long> {
     List<Good> findByName(String name);
     List<Good> findByCategory(Category category);
     Good findByNameAndDescriptionAndCostAndShopNameAndCategory(String name, String description, Double cost, String shopName, Category category);
+    Good findByNameAndDescriptionAndCostAndShopName(String name, String description, Double cost, String shopName);
     List<Good> findByShop(Shop shop);
 }
