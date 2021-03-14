@@ -44,6 +44,6 @@ public class BuyController {
 
     @PostMapping
     public List<BoughtGoodDTO> buyGoods(@RequestBody List<BuyGoodDTO> goodDTOList) {
-        return buyService.buyGoods(goodDTOList);
+            return buyService.buyGoods(goodDTOList);
     }
 }
