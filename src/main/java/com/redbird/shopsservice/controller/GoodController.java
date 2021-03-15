@@ -53,30 +53,28 @@ public class GoodController {
     }
 
     @PostMapping
-    public Good saveGood(@RequestBody GoodDTO goodDTO) {
+    public Good saveGood(@RequestBody GoodFromFactory goodFromFactory) {
         // check if category doesn't exists
-        if (!isInEnum(goodDTO.getCategory(), Category.class)) {
+        if (!isInEnum(goodFromFactory.getCategory(), Category.class)) {
             return null;
         }
         // check if shop exists
-        Shop shop = shopService.findByName(goodDTO.getShopName());
+        Shop shop = shopService.findByName(goodFromFactory.getShopName());
         if (shop == null) return null;
         // check if good already exists
-        Good good = goodService.findGood(goodDTO.getName(), goodDTO.getDescription(), goodDTO.getCost(),
-                goodDTO.getShopName(), Category.valueOf(goodDTO.getCategory()));
+        Good good = goodService.findGood(
+                goodFromFactory.getName(),
+                goodFromFactory.getDescription(),
+                goodFromFactory.getCost(),
+                goodFromFactory.getShopName(),
+                Category.valueOf(goodFromFactory.getCategory()));
+
         if (good != null) {
-            good.setAmount(good.getAmount()+goodDTO.getAmount());
+            good.setAmount(good.getAmount()+goodFromFactory.getAmount());
             return goodService.saveGood(good);
         }
-        // create new good
-        good = new Good();
-        good.setCategory(Category.valueOf(goodDTO.getCategory()));
-        good.setName(goodDTO.getName());
-        good.setDescription(goodDTO.getDescription());
-        good.setCost(goodDTO.getCost());
-        good.setShop(shop);
-        good.setAmount(goodDTO.getAmount());
-        return goodService.saveGood(good);
+
+        return goodService.saveGood(createGood(goodFromFactory, shop));
     }
 
     @DeleteMapping("/{id}")
@@ -88,4 +86,18 @@ public class GoodController {
     public Good updateGood(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields) {
         return goodService.updateById(id, fields);
     }
+
+
+    public Good createGood(GoodFromFactory goodFromFactory, Shop shop) {
+        Good good = new Good();
+        good.setCategory(Category.valueOf(goodFromFactory.getCategory()));
+        good.setName(goodFromFactory.getName());
+        good.setDescription(goodFromFactory.getDescription());
+        good.setCost(goodFromFactory.getCost());
+        good.setShop(shop);
+        good.setAmount(goodFromFactory.getAmount());
+        return good;
+    }
 }
+
+

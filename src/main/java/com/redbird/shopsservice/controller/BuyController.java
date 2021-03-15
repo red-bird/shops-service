@@ -1,9 +1,6 @@
 package com.redbird.shopsservice.controller;
 
-import com.redbird.shopsservice.model.BoughtGood;
-import com.redbird.shopsservice.model.BoughtGoodDTO;
-import com.redbird.shopsservice.model.BuyGoodDTO;
-import com.redbird.shopsservice.model.GoodDTO;
+import com.redbird.shopsservice.model.*;
 import com.redbird.shopsservice.service.BuyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +40,7 @@ public class BuyController {
     }
 
     @PostMapping
-    public List<BoughtGoodDTO> buyGoods(@RequestBody List<BuyGoodDTO> goodDTOList) {
-            return buyService.buyGoods(goodDTOList);
+    public List<BoughtGoodDTO> buyGoods(@RequestBody BuyQuery buyQuery) {
+            return buyService.buyGoods(buyQuery);
     }
 }

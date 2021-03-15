@@ -5,6 +5,7 @@ import com.redbird.shopsservice.controller.GoodController;
 import com.redbird.shopsservice.controller.ShopController;
 import com.redbird.shopsservice.model.Category;
 import com.redbird.shopsservice.model.GoodDTO;
+import com.redbird.shopsservice.model.GoodFromFactory;
 import com.redbird.shopsservice.model.ShopDTO;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
@@ -60,7 +61,7 @@ public class GoodControllerTest {
     @Test
     @Order(2)
     public void postFirstGood() throws Exception {
-        GoodDTO good = new GoodDTO();
+        GoodFromFactory good = new GoodFromFactory();
         good.setName("Chair");
         good.setDescription("So comfortable to sit");
         good.setCost(4999.99);
@@ -112,7 +113,7 @@ public class GoodControllerTest {
     @Test
     @Order(2)
     public void postSecondGood() throws Exception {
-        GoodDTO good = new GoodDTO();
+        GoodFromFactory good = new GoodFromFactory();
         good.setName("Table");
         good.setDescription("So comfortable to flip");
         good.setCost(11999.99);
@@ -150,7 +151,7 @@ public class GoodControllerTest {
     @Test
     @Order(3)
     public void postFirstGoodIdentical() throws Exception {
-        GoodDTO good = new GoodDTO();
+        GoodFromFactory good = new GoodFromFactory();
         good.setName("Chair");
         good.setDescription("So comfortable to sit");
         good.setCost(4999.99);
