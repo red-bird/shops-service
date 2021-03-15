@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/goods")
+@RequestMapping("/goods")
 public class GoodController {
 
     public <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
