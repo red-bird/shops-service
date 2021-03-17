@@ -53,7 +53,7 @@ public class GoodController {
     }
 
     @PostMapping
-    public Good saveGood(@RequestBody GoodFromFactory goodFromFactory) {
+    public GoodDTO saveGood(@RequestBody GoodFromFactory goodFromFactory) {
         // check if category doesn't exists
         if (!isInEnum(goodFromFactory.getCategory(), Category.class)) {
             return null;
@@ -65,16 +65,15 @@ public class GoodController {
         Good good = goodService.findGood(
                 goodFromFactory.getName(),
                 goodFromFactory.getDescription(),
-                goodFromFactory.getCost(),
                 goodFromFactory.getShopName(),
                 Category.valueOf(goodFromFactory.getCategory()));
 
         if (good != null) {
             good.setAmount(good.getAmount()+goodFromFactory.getAmount());
-            return goodService.saveGood(good);
+            return convertToGoodDTO(goodService.saveGood(good));
         }
 
-        return goodService.saveGood(createGood(goodFromFactory, shop));
+        return convertToGoodDTO(goodService.saveGood(createGood(goodFromFactory, shop)));
     }
 
     @DeleteMapping("/{id}")
@@ -93,10 +92,20 @@ public class GoodController {
         good.setCategory(Category.valueOf(goodFromFactory.getCategory()));
         good.setName(goodFromFactory.getName());
         good.setDescription(goodFromFactory.getDescription());
-        good.setCost(goodFromFactory.getCost());
+        good.setCost(0.0);
         good.setShop(shop);
         good.setAmount(goodFromFactory.getAmount());
         return good;
+    }
+
+    public GoodDTO convertToGoodDTO(Good good) {
+        GoodDTO goodDTO = new GoodDTO();
+        goodDTO.setName(good.getName());
+        goodDTO.setDescription(good.getDescription());
+        goodDTO.setCost(good.getCost());
+        goodDTO.setAmount(good.getAmount());
+        goodDTO.setCategory(goodDTO.getCategory());
+        return goodDTO;
     }
 }
 

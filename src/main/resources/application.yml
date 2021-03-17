@@ -1,67 +1,60 @@
 server:
-  port: 8082
+  port: ${PORT}
 spring:
   output.ansi.enabled: ALWAYS
-  application:
-    name: shops-service
-  jpa:
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
-    hibernate:
-      jdbc:
-        time_zone: Europe/Moscow
-      # create-drop only for tests
-      ddl-auto: create-drop
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/shops?useLegacyDatetimeCode=false
-    username: postgres
-    password: 1945
-  cloud:
-    loadbalancer:
-      cache:
-        ttl: 1s
-    ribbon:
-      enabled: false
 
-management:
-  endpoint:
-    shutdown:
-      enabled: true
-    health:
-      show-details: always
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-eureka:
-  instance:
-    hostname: localhost
-    prefer-ip-address: true
-    instanceId: ${spring.application.name}:${random.uuid}
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 3
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-feign:
-  client:
-    config:
-      shops-service:
-        readTimeout: 1000
-        connectTimeout: 1000
-        loggerLevel: full
-
-
+#server:
+#  port: 8082
+#spring:
+#  output.ansi.enabled: ALWAYS
+#  application:
+#    name: shops-service
+#  jpa:
+#    database: postgresql
+#    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+#    hibernate:
+#      jdbc:
+#        time_zone: Europe/Moscow
+#      # create-drop only for tests
+#      ddl-auto: create-drop
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/shops?useLegacyDatetimeCode=false
+#    username: postgres
+#    password: 1945
 #  cloud:
 #    loadbalancer:
 #      cache:
 #        ttl: 1s
+#    ribbon:
+#      enabled: false
+#
+#management:
+#  endpoint:
+#    shutdown:
+#      enabled: true
+#    health:
+#      show-details: always
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
 #
 #eureka:
 #  instance:
+##    hostname: localhost
+#    prefer-ip-address: true
 #    instanceId: ${spring.application.name}:${random.uuid}
 #    leaseRenewalIntervalInSeconds: 1
 #    leaseExpirationDurationInSeconds: 3
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#
+#feign:
+#  client:
+#    config:
+#      shops-service:
+#        readTimeout: 1000
+#        connectTimeout: 1000
+#        loggerLevel: full

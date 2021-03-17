@@ -33,9 +33,9 @@ public class GoodService {
         return goodRepository.findByName(name);
     }
 
-    public Good findGood(String name, String description, Double cost, String shopName, Category category) {
+    public Good findGood(String name, String description, String shopName, Category category) {
         Shop shop = shopService.findByName(shopName);
-        return goodRepository.findByNameAndDescriptionAndCostAndShopAndCategory(name, description, cost, shop, category);
+        return goodRepository.findByNameAndDescriptionAndShopAndCategory(name, description, shop, category);
     }
 
     public Good findGoodWithoutCategory(String name, String description, Double cost, String shopName){
