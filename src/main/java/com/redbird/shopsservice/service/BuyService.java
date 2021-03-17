@@ -12,13 +12,6 @@ import java.util.List;
 @Service
 public class BuyService {
 
-    public <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
-        for (E e : enumClass.getEnumConstants()) {
-            if(e.name().equals(value)) { return true; }
-        }
-        return false;
-    }
-
     @Autowired
     private BoughtGoodRepository boughtGoodRepository;
 
@@ -28,80 +21,176 @@ public class BuyService {
     @Autowired
     private GoodService goodService;
 
-    public List<BoughtGood> findAll() {
-        return boughtGoodRepository.findAll();
+    public List<BoughtGoodDTO> findAll() {
+        return convertToDTOList(boughtGoodRepository.findAll());
     }
 
-    public BoughtGood findById(Long id) {
-        return boughtGoodRepository.findById(id).orElse(null);
+    public BoughtGoodDTO findById(Long id) {
+        return convertToDTO(boughtGoodRepository.findById(id).orElse(null));
     }
 
-    public List<BoughtGood> findByCustomerId(Long id) {
-        return boughtGoodRepository.findByCustomerId(id);
+    public List<BoughtGoodDTO> findByCustomerId(Long id) {
+        return convertToDTOList(boughtGoodRepository.findByCustomerId(id));
     }
 
-    public List<BoughtGood> findByShopName(String shopName) {
+    public List<BoughtGoodDTO> findByShopName(String shopName) {
         Shop shop = shopService.findByName(shopName);
         if (shop == null) return null;
-        return boughtGoodRepository.findByShop(shop);
+        return convertToDTOList(boughtGoodRepository.findByShop(shop));
     }
 
-    public List<BoughtGood> findByGoodName(String name) {
-        return boughtGoodRepository.findByName(name);
+    public List<BoughtGoodDTO> findByGoodName(String name) {
+        return convertToDTOList(boughtGoodRepository.findByName(name));
     }
 
-    public synchronized List<BoughtGood> buyGoods(List<BuyGoodDTO> goodDTOList) {
-        if (goodDTOList.size() == 0) {
+    public synchronized List<BoughtGoodDTO> buyGoods(BuyQuery buyQuery) {
+        if (buyQuery.getGoodDTOS().size() == 0) {
             return null;
         }
-
         List<Good> goods = new ArrayList<>();
-        goodDTOList.forEach(goodDTO -> {
-            Good res;
-            if (isInEnum(goodDTO.getGoodDTO().getCategory(), Category.class)){
-                res = goodService.findGood(
-                        goodDTO.getGoodDTO().getName(),
-                        goodDTO.getGoodDTO().getDescription(),
-                        goodDTO.getGoodDTO().getCost(),
-                        goodDTO.getGoodDTO().getShopName(),
-                        Category.valueOf(goodDTO.getGoodDTO().getCategory()));
-                // if find and amount is ok
-                if (res != null && (res.getAmount() > goodDTO.getGoodDTO().getAmount())) {
-                    //set amount here to distinct later
-                    res.setAmount(goodDTO.getGoodDTO().getAmount());
-                    goods.add(res);
-                }
+        buyQuery.getGoodDTOS().forEach(goodDTO -> {
+            Good response;
+            response = goodService.findGoodWithoutCategory(
+                    goodDTO.getName(),
+                    goodDTO.getDescription(),
+                    goodDTO.getCost(),
+                    buyQuery.getShopName());
+            // if find and amount is ok
+            if (response != null
+                    && (response.getAmount() >= goodDTO.getAmount())
+                    && (goodDTO.getAmount() > 0)) {
+                // copy response to prevent sudden change of db record
+                Good result = copyGood(response);
+                result.setAmount(goodDTO.getAmount());
+                goods.add(result);
             }
         });
+
         // if all goods are pass checks and converted
-        if (goods.size() < goodDTOList.size()) {
+        if (goods.size() < buyQuery.getGoodDTOS().size()) {
             return null;
         }
 
         // save boughtList and make response
-        Long customerId = goodDTOList.get(0).getCustomerId();
+        Long customerId = buyQuery.getCustomerId();
         ZonedDateTime time = ZonedDateTime.now();
         List<BoughtGood> boughtGoodList = new ArrayList<>();
 
         goods.forEach(good -> {
-            BoughtGood boughtGood = new BoughtGood();
-            boughtGood.setName(good.getName());
-            boughtGood.setDescription(good.getDescription());
-            boughtGood.setCost(good.getCost());
-            boughtGood.setShop(good.getShop());
-            boughtGood.setCategory(good.getCategory());
-            boughtGood.setCustomerId(customerId);
-            boughtGood.setAmount(good.getAmount());
-            boughtGood.setBoughtTime(time);
-
+            BoughtGood boughtGood = convertToBoughtGood(good, customerId, time);
 
             Good tmp = goodService.findById(good.getId());
             tmp.setAmount(tmp.getAmount() - good.getAmount());
             boughtGoodList.add(boughtGood);
             goodService.saveGood(tmp);
         });
+        boughtGoodRepository.saveAll(boughtGoodList);
+        return categoryChanger(convertToDTOList(boughtGoodList), buyQuery.getGoodDTOS());
 
-        return boughtGoodRepository.saveAll(boughtGoodList);
+//        if (goodDTOList.size() == 0) {
+//            return null;
+//        }
+//
+//        List<Good> goods = new ArrayList<>();
+//        goodDTOList.forEach(goodDTO -> {
+//            Good response;
+//            response = goodService.findGoodWithoutCategory(
+//                    goodDTO.getGoodDTO().getName(),
+//                    goodDTO.getGoodDTO().getDescription(),
+//                    goodDTO.getGoodDTO().getCost(),
+//                    goodDTO.getGoodDTO().getShopName());
+//            // if find and amount is ok
+//            if (response != null
+//                    && (response.getAmount() >= goodDTO.getGoodDTO().getAmount())
+//                    && (goodDTO.getGoodDTO().getAmount() > 0)) {
+//                // copy response to prevent sudden change of db record
+//                Good result = copyGood(response);
+//                result.setAmount(goodDTO.getGoodDTO().getAmount());
+//                goods.add(result);
+//            }
+//        });
+//        // if all goods are pass checks and converted
+//        if (goods.size() < goodDTOList.size()) {
+//            return null;
+//        }
+//
+//        // save boughtList and make response
+//        Long customerId = goodDTOList.get(0).getCustomerId();
+//                    ZonedDateTime time = ZonedDateTime.now();
+//        List<BoughtGood> boughtGoodList = new ArrayList<>();
+//
+//        goods.forEach(good -> {
+//            BoughtGood boughtGood = convertToBoughtGood(good, customerId, time);
+//
+//            Good tmp = goodService.findById(good.getId());
+//            tmp.setAmount(tmp.getAmount() - good.getAmount());
+//            boughtGoodList.add(boughtGood);
+//            goodService.saveGood(tmp);
+//        });
+//        boughtGoodRepository.saveAll(boughtGoodList);
+//        List<BoughtGoodDTO> boughtGoodDTOList = convertToDTOList(boughtGoodList);
+//        List<BoughtGoodDTO> response = categoryChanger(boughtGoodDTOList, goodDTOList);
+//        return response;
     }
 
+
+    public List<BoughtGoodDTO> categoryChanger(List<BoughtGoodDTO> boughtGoodDTOList, List<GoodDTO> goodDTOList) {
+        for (int i = 0; i < boughtGoodDTOList.size(); i++) {
+            boughtGoodDTOList.get(i).setCategory(goodDTOList.get(i).getCategory());
+        }
+        return boughtGoodDTOList;
+    }
+
+    // assist methods
+
+    public List<BoughtGoodDTO> convertToDTOList(List<BoughtGood> boughtGoodList) {
+        if (boughtGoodList == null) return null;
+        List<BoughtGoodDTO> boughtGoodDTOList = new ArrayList<>();
+        boughtGoodList.forEach(boughtGood -> {
+            boughtGoodDTOList.add(convertToDTO(boughtGood));
+        });
+        return boughtGoodDTOList;
+    }
+
+    public BoughtGoodDTO convertToDTO(BoughtGood boughtGood) {
+        if (boughtGood == null) return null;
+        BoughtGoodDTO boughtGoodDTO = new BoughtGoodDTO();
+        boughtGoodDTO.setName(boughtGood.getName());
+        boughtGoodDTO.setDescription(boughtGood.getDescription());
+        boughtGoodDTO.setCost(boughtGood.getCost());
+        boughtGoodDTO.setShopName(boughtGood.getShop().getName());
+        boughtGoodDTO.setCategory(boughtGood.getCategory().toString());
+        boughtGoodDTO.setCustomerId(boughtGood.getCustomerId());
+        boughtGoodDTO.setAmount(boughtGood.getAmount());
+        boughtGoodDTO.setBoughtTime(boughtGood.getBoughtTime());
+        return boughtGoodDTO;
+    }
+
+    public BoughtGood convertToBoughtGood(Good good, Long customerId, ZonedDateTime time) {
+        if (good == null) return null;
+        BoughtGood boughtGood = new BoughtGood();
+        boughtGood.setName(good.getName());
+        boughtGood.setDescription(good.getDescription());
+        boughtGood.setCost(good.getCost());
+        boughtGood.setShop(good.getShop());
+        boughtGood.setCategory(good.getCategory());
+        boughtGood.setCustomerId(customerId);
+        boughtGood.setAmount(good.getAmount());
+        boughtGood.setBoughtTime(time);
+        return boughtGood;
+    }
+
+    public Good copyGood (Good good) {
+        Good res = new Good();
+        res.setId(good.getId());
+        res.setName(good.getName());
+        res.setDescription(good.getDescription());
+        res.setCost(good.getCost());
+        res.setAmount(good.getAmount());
+        res.setShop(good.getShop());
+        res.setCategory(good.getCategory());
+        res.setCreatedTime(good.getCreatedTime());
+        res.setUpdatedTime(good.getUpdatedTime());
+        return res;
+    }
 }

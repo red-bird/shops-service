@@ -1,10 +1,9 @@
 spring:
-  output.ansi.enabled: ALWAYS
   application:
     name: shops-service
   cloud:
     config:
-      disovery:
+      discovery:
         enabled: true
         serviceId: config-server
     bootstrap:

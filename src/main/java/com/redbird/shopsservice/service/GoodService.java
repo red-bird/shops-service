@@ -18,6 +18,9 @@ public class GoodService {
     @Autowired
     private GoodRepository goodRepository;
 
+    @Autowired
+    private ShopService shopService;
+
     public List<Good> findAll() {
         return goodRepository.findAll();
     }
@@ -30,8 +33,14 @@ public class GoodService {
         return goodRepository.findByName(name);
     }
 
-    public Good findGood(String name, String description, Double cost, String shopName, Category category) {
-        return goodRepository.findByNameAndDescriptionAndCostAndShopNameAndCategory(name, description, cost, shopName, category);
+    public Good findGood(String name, String description, String shopName, Category category) {
+        Shop shop = shopService.findByName(shopName);
+        return goodRepository.findByNameAndDescriptionAndShopAndCategory(name, description, shop, category);
+    }
+
+    public Good findGoodWithoutCategory(String name, String description, Double cost, String shopName){
+        Shop shop = shopService.findByName(shopName);
+        return goodRepository.findByNameAndDescriptionAndCostAndShop(name, description, cost, shop);
     }
 
     public List<Good> findByCategory(Category category) {

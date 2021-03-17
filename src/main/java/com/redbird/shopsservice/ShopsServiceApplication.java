@@ -1,6 +1,7 @@
 package com.redbird.shopsservice;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -13,9 +14,12 @@ import java.util.TimeZone;
 @EnableEurekaClient
 public class ShopsServiceApplication {
 
+	@Value("${spring.jpa.hibernate.jdbc.time_zone}")
+	private String timezone;
+
 	@PostConstruct
 	void init() {
-		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
+		TimeZone.setDefault(TimeZone.getTimeZone(timezone));
 	}
 
 	public static void main(String[] args) {

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/goods")
+@RequestMapping("/goods")
 public class GoodController {
 
     public <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
@@ -53,30 +53,27 @@ public class GoodController {
     }
 
     @PostMapping
-    public Good saveGood(@RequestBody GoodDTO goodDTO) {
+    public GoodDTO saveGood(@RequestBody GoodFromFactory goodFromFactory) {
         // check if category doesn't exists
-        if (!isInEnum(goodDTO.getCategory(), Category.class)) {
+        if (!isInEnum(goodFromFactory.getCategory(), Category.class)) {
             return null;
         }
         // check if shop exists
-        Shop shop = shopService.findByName(goodDTO.getShopName());
+        Shop shop = shopService.findByName(goodFromFactory.getShopName());
         if (shop == null) return null;
         // check if good already exists
-        Good good = goodService.findGood(goodDTO.getName(), goodDTO.getDescription(), goodDTO.getCost(),
-                goodDTO.getShopName(), Category.valueOf(goodDTO.getCategory()));
+        Good good = goodService.findGood(
+                goodFromFactory.getName(),
+                goodFromFactory.getDescription(),
+                goodFromFactory.getShopName(),
+                Category.valueOf(goodFromFactory.getCategory()));
+
         if (good != null) {
-            good.setAmount(good.getAmount()+goodDTO.getAmount());
-            return goodService.saveGood(good);
+            good.setAmount(good.getAmount()+goodFromFactory.getAmount());
+            return convertToGoodDTO(goodService.saveGood(good));
         }
-        // create new good
-        good = new Good();
-        good.setCategory(Category.valueOf(goodDTO.getCategory()));
-        good.setName(goodDTO.getName());
-        good.setDescription(goodDTO.getDescription());
-        good.setCost(goodDTO.getCost());
-        good.setShop(shop);
-        good.setAmount(goodDTO.getAmount());
-        return goodService.saveGood(good);
+
+        return convertToGoodDTO(goodService.saveGood(createGood(goodFromFactory, shop)));
     }
 
     @DeleteMapping("/{id}")
@@ -88,4 +85,28 @@ public class GoodController {
     public Good updateGood(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields) {
         return goodService.updateById(id, fields);
     }
+
+
+    public Good createGood(GoodFromFactory goodFromFactory, Shop shop) {
+        Good good = new Good();
+        good.setCategory(Category.valueOf(goodFromFactory.getCategory()));
+        good.setName(goodFromFactory.getName());
+        good.setDescription(goodFromFactory.getDescription());
+        good.setCost(0.0);
+        good.setShop(shop);
+        good.setAmount(goodFromFactory.getAmount());
+        return good;
+    }
+
+    public GoodDTO convertToGoodDTO(Good good) {
+        GoodDTO goodDTO = new GoodDTO();
+        goodDTO.setName(good.getName());
+        goodDTO.setDescription(good.getDescription());
+        goodDTO.setCost(good.getCost());
+        goodDTO.setAmount(good.getAmount());
+        goodDTO.setCategory(goodDTO.getCategory());
+        return goodDTO;
+    }
 }
+
+
